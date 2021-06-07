@@ -12,10 +12,14 @@ class Register {
     private:
         std::vector<char> _registers; // Uses char since memory is byte-addressed, and this simplifies the process
 
+        int _iregister;              // Index register, used to point at memory locations
+
     public:
 
         Register(){
             _registers = std::vector<char>(16);
+
+            _iregister = 0;
         }
 
 
@@ -55,6 +59,19 @@ class Register {
             else{
                 std::cout << "FATAL: Invalid register memory write requested." << std::endl;
             }
+        }
+
+        void write_i(int content){
+            // Even though the index register is 16 bit, it can only point to the first 4096 bytes of memory (12 bits)
+            // So accessing more than that is considered an invalid value
+            if(content > 4096){
+                std::cout << "FATAL: Invalid index register memory write requested." << std::endl;
+            }
+            _iregister = content;
+        }
+
+        int read_i(){
+            return _iregister;
         }
 };
 
