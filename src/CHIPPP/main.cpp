@@ -7,6 +7,9 @@
 #include "system.h"
 #include "timer.h"
 
+#include "iostream"
+#include "fstream"
+
 int main(int argc, char *argv[]){
     
     // Verify input
@@ -20,8 +23,33 @@ int main(int argc, char *argv[]){
 
     // System modules and variables
 
-    int pc = 0x200; // Program counter: Memory from 0x0 to 0x1FF are reserved, so we start at 0x200
+    int pc = 0x200;       // Program counter: Memory from 0x0 to 0x1FF are reserved, so we start at 0x200
+    unsigned char sp = 0; // Stack pointer. TODO: current stack implementation doesnt care about sp!
 
     Memory mem = Memory();
     Register reg = Register();
+    Sound sound = Sound();
+    Timer timer = Timer();
+
+    // Open the rom and loads it into memory
+	std::fstream rom;
+	rom.open(romPath, std::ios::in);
+
+	if (!rom) {
+		std::cerr << "Could not open rom!" << std::endl;
+	}
+
+    mem.loadRom(rom);
+	
+
+
+    // Close the rom
+    rom.close();
 }
+
+// Fetches the instruction from memory
+unsigned char fetch(Memory m, int pc){
+    return m.read(pc);
+}
+
+
