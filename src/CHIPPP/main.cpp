@@ -41,7 +41,7 @@ int main(int argc, char *argv[]){
 
     mem.loadRom(rom);
 	
-
+    //while true, emulate cycle (fetch, decode, execute), draw graphics and set pressed keys
 
     // Close the rom
     rom.close();

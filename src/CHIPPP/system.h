@@ -6,6 +6,10 @@
 #define WINDOW_WIDTH            64
 #define WINDOW_HEIGHT           32
 
+// Internal console resolution
+#define WINDOW_INTERNAL_WIDTH   64
+#define WINDOW_INTERNAL_HEIGHT  32
+
 // Memory specs
 #define MEMORY_SIZE             4096
 #define INTERPRETER_SIZE        512
