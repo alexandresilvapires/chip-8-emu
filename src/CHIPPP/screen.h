@@ -1,4 +1,4 @@
-#ifndef __SCREEN_H_
+#ifndef __SCREEN_H__
 #define __SCREEN_H__
 
 #include <SDL2/SDL.h>
@@ -68,6 +68,10 @@ class Screen {
             else{
                 display[i] = 0xFF000000;
             }
+        }
+
+        clearDisplay(){
+            memset(display, 0, sizeof(display));
         }
 
         draw(){

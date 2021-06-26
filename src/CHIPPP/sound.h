@@ -1,4 +1,4 @@
-#ifndef __SOUND_H_
+#ifndef __SOUND_H__
 #define __SOUND_H__
 
 class Sound {

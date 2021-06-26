@@ -1,4 +1,4 @@
-#ifndef __REGISTER_H_
+#ifndef __REGISTER_H__
 #define __REGISTER_H__
 
 #include <sstream>
@@ -10,25 +10,25 @@
 class Register {
 
     private:
-        std::vector<char> _registers; // Uses char since memory is byte-addressed, and this simplifies the process
+        std::vector<unsigned char> _registers; // Uses char since memory is byte-addressed, and this simplifies the process
 
         int _iregister;              // Index register, used to point at memory locations
 
     public:
 
         Register(){
-            _registers = std::vector<char>(16);
+            _registers = std::vector<unsigned char>(16);
 
             _iregister = 0;
         }
 
 
-        void write(int i, char content){
+        void write(int i,unsigned char content){
             // We assure that the memory being accessed isn't out of bounds
             _registers[i % _registers.size()] = content;
         }
 
-        void write(const char *reg, char content){
+        void write(const char *reg, char unsigned content){
             // Registers are named from V0-VF, this uses a cheap method to get the register name
             if(strlen(reg) == 2 && reg[0] == 'V'){
 
@@ -42,12 +42,12 @@ class Register {
             }
         }
 
-        char read(int i){
+        unsigned char read(int i){
             // We assure that the memory being accessed isn't out of bounds
             return _registers[i % _registers.size()];
         }
 
-        char read(const char *reg){
+        unsigned char read(const char *reg){
             // Registers are named from V0-VF, this uses a cheap method to get the register name
             if(strlen(reg) == 2 && reg[0] == 'V'){
 
