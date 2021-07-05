@@ -58,23 +58,28 @@ class Screen {
             }
         }
 
-        flipPixel(int i){
+        bool flipPixel(int x, int y){
+
+            int i = x % WINDOW_INTERNAL_WIDTH + y % WINDOW_INTERNAL_HEIGHT;
 
             // flips given pixel's color
-
             if(display[i] == 0xFF000000){
                 display[i] = 0xFFFFFFFF;
+                return false;
             }
             else{
                 display[i] = 0xFF000000;
+
+                //Returns true in case of a 'collision'
+                return true;
             }
         }
 
-        clearDisplay(){
+        void clearDisplay(){
             memset(display, 0, sizeof(display));
         }
 
-        draw(){
+        void draw(){
             SDL_UpdateTexture(texture, NULL, display, WINDOW_INTERNAL_WIDTH * sizeof(uint32_t));
             SDL_RenderClear(renderer);
             SDL_RenderCopy(renderer, texture, NULL, NULL);

@@ -26,9 +26,9 @@ A simple Chip-8 emulator written in C++, using the SDL library.
 | SHL Vx {, Vy} | X     |
 | SNE Vx, Vy    | X     |
 | LD I, addr    | X     |
-| JP V0, addr   |       |
-| RND Vx, byte  |       |
-| DRW Vx Vy nib |       |
+| JP V0, addr   | X     |
+| RND Vx, byte  | X     |
+| DRW Vx Vy nib | X     |
 | SKP Vx        |       |
 | SKNP Vx       |       |
 | LD Vx, DT     |       |
