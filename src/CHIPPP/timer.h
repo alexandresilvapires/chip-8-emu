@@ -20,6 +20,10 @@ class Timer {
             return _timer;
         }
 
+        void setTimer(unsigned char timer){
+            _timer = timer;
+        }
+
         bool isFinished(){
             return _timer == 0;
         }

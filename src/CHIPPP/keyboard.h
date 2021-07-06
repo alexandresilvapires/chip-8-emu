@@ -4,7 +4,7 @@
 class Keyboard {
 
     private:
-        bool _keys[15]; // where keys are ordered {1,2,3,4 / q,w,e,r / a,s,d,f / z,x,c,v}
+        bool _keys[15] = { false }; // where keys are ordered {1,2,3,4 / q,w,e,r / a,s,d,f / z,x,c,v}
 
     public:
         Keyboard(){}

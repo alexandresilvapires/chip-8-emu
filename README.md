@@ -29,17 +29,17 @@ A simple Chip-8 emulator written in C++, using the SDL library.
 | JP V0, addr   | X     |
 | RND Vx, byte  | X     |
 | DRW Vx Vy nib | X     |
-| SKP Vx        |       |
-| SKNP Vx       |       |
-| LD Vx, DT     |       |
+| SKP Vx        | X     |
+| SKNP Vx       | X     |
+| LD Vx, DT     | X     |
 | LD Vx, K      |       |
-| LD DT, Vx     |       |
-| LD ST, Vx     |       |
-| ADD I, Vx     |       |
-| LD F, Vx      |       |
-| LD B, Vx      |       |
-| LD [I], Vx    |       |
-| ADD Vx, [I]   |       |
+| LD DT, Vx     | X     |
+| LD ST, Vx     | X     |
+| ADD I, Vx     | X     |
+| LD F, Vx      | X     |
+| LD B, Vx      | X     |
+| LD [I], Vx    | X     |
+| ADD Vx, [I]   | X     |
 
 
 *1 - originally used for old computers, not necessary for the interpreter

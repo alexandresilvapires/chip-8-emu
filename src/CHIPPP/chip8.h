@@ -28,6 +28,7 @@ class Chip8 {
         Timer timer = Timer();
         Screen screen = Screen();
         Stack stack = Stack();
+        Keyboard keyboard = Keyboard();
 
     public:
         Chip8(){}
@@ -169,6 +170,9 @@ class Chip8 {
                                     reg.write(15, vx << 7);
                                     reg.write(x, vx << 1);
                                     break;
+
+                                default:
+                                    break;
                             }
                             
                             pc += 2;
@@ -200,50 +204,164 @@ class Chip8 {
                             
                             reg.write(getNibble(instr, 0x0F00, 8,12), r & k);
 
+                            pc += 2;
+                            break;
+
                         case 13: // Display a n pixels tall sprite starting at memory addr stored in I, in coords (Vx, Vy)
                                  // If any pixel is erased after being XORed, Vx is set to 1, else is set to 0. 
                                  // Pixels wrap around the screen if coordenates are outside the expected size
                                  // Format Dxyn
 
-                                unsigned char n = (unsigned char) getNibble(instr, 0x000F,0,4);
-                                unsigned char vx = reg.read( getNibble(instr, 0x0F00,8,12));
-                                unsigned char vy = reg.read( getNibble(instr, 0x00F0,4,8));
-                                int i = reg.read_i();
+                            unsigned char n = (unsigned char) getNibble(instr, 0x000F,0,4);
+                            unsigned char vx = reg.read( getNibble(instr, 0x0F00,8,12));
+                            unsigned char vy = reg.read( getNibble(instr, 0x00F0,4,8));
+                            int i = reg.read_i();
 
-                                reg.write(15, 0); //reset VF
+                            reg.write(15, 0); //reset VF
 
-                                bool collision = false;
+                            bool collision = false;
 
-                                for(int k = 0; k < n; k++){
+                            for(int k = 0; k < n; k++){
 
-                                    //Stores a row of pixels to draw 
-                                    unsigned char bitmap = mem.read(i);
+                                //Stores a row of pixels to draw 
+                                unsigned char bitmap = mem.read(i);
 
-                                    //Cycle every bit of the bitmap
-                                    for(int l = 7; l >= 0; l--){
-                                        unsigned char newbit = getNibble(bitmap, pow(2, l), l, 8);
+                                //Cycle every bit of the bitmap
+                                for(int l = 7; l >= 0; l--){
+                                    unsigned char newbit = getNibble(bitmap, pow(2, l), l, 8);
 
-                                        if(newbit == 1){
-                                            collision = collision | screen.flipPixel(vx, vy);
-                                        }
-
-                                        vx++;
-
-                                        //If we reach the right end of the screen, we break
-                                        if(vx % WINDOW_INTERNAL_WIDTH == 0) break;
+                                    if(newbit == 1){
+                                        collision = collision | screen.flipPixel(vx, vy);
                                     }
 
-                                    vy++;
-                                    
-                                     //If we reach the bottom end of the screen, we break
-                                    if(vy % WINDOW_INTERNAL_HEIGHT == 0) break;
+                                    vx++;
 
-                                    i++;
-
+                                    //If we reach the right end of the screen, we break
+                                    if(vx % WINDOW_INTERNAL_WIDTH == 0) break;
                                 }
 
-                                if(collision) reg.write(15, 1);
+                                vy++;
+                                    
+                                 //If we reach the bottom end of the screen, we break
+                                if(vy % WINDOW_INTERNAL_HEIGHT == 0) break;
+                                i++;
 
+                            }
+
+                            if(collision) reg.write(15, 1);
+
+                            pc += 2;
+                            break;
+
+                        case 14: // Used for keyboard instructions
+                            
+                            int n = getNibble(instr, 0x000F, 0, 4);
+
+                            switch(n){
+                                case 1: //Skip if key with the value Vx is not pressed, format EXA1
+                                    unsigned char vx = reg.read( getNibble(instr, 0x0F00, 8, 12));
+                                    
+                                    if(keyboard.getKey((int) vx)) pc += 2;
+
+                                    break;
+                                
+                                case 14: //Skip if key with the value Vx is pressed, format EX9E
+                                    unsigned char vx = reg.read( getNibble(instr, 0x0F00, 8, 12));
+                                    
+                                    if(!keyboard.getKey((int) vx)) pc += 2;
+
+                                    break;
+
+                                default:
+                                    break;
+                                
+                                pc += 2;
+                                break;
+                            }
+
+                        case 15: // Used for load and add instructions over registers and items, usual format FX**
+                            
+                            int n = getNibble(instr, 0x00FF, 0, 8);
+                            int x = getNibble(instr, 0x0F00, 8, 12);
+
+                            switch(n){
+                                case 7: //Set Vx to delay timer, format FX07
+                                    
+                                    reg.write(x, timer.getTimer());
+
+                                    break;
+                                
+                                case 10: // Wait for a key press and store pressed key in Vx, format FX0A
+                                    
+                                    // TODO keyboard
+                                    unsigned char key = 0;
+
+                                    reg.write(x, key);
+
+                                    break;
+
+                                case 21: //Set delay timer to Vx, format FX15
+                                    
+                                    timer.setTimer( reg.read(x));
+
+                                    break;
+                                
+                                case 24: //Set sound timer to Vx, format FX18
+                                    
+                                    sound.setTimer( reg.read(x));
+
+                                    break;
+
+                                case 30: //Set I = I + Vx, format FX1E
+                                    
+                                    reg.write_i( (int) reg.read(x) + reg.read_i());
+
+                                    break;
+
+                                case 41: //Set I = location of sprite for digit Vx using the known font. Format FX29
+                                    
+                                    // TODO verify this
+                                    reg.write_i( 0x5 * reg.read(x));
+
+                                    break;
+
+                                case 51: // Store BCD representation of Vx in I, I+1 and I+2 (100s, 10s, 1s respectively).
+                                        // Format FX33
+
+                                    // TODO verify this
+
+                                    unsigned char vx = reg.read(x);
+                                    unsigned char units = vx % 10;
+                                    unsigned char tens = vx % 100 - units;
+
+                                    mem.write(reg.read_i() + 2, units);
+                                    mem.write(reg.read_i() + 1, tens);
+                                    mem.write(reg.read_i(), vx - tens);
+
+                                case 85: // Stores registers 0 to Vx into I to I+X. Format FX55
+
+                                    // TODO verify this
+                                    for(int i = 0; i <= x; i++){
+                                        reg.write_i( (int) reg.read(i));
+                                    }
+
+                                case 101: // Write into registers 0 to Vx from addresses I to I+X. Format FX65
+
+                                    // TODO verify this
+                                    for(int i = 0; i <= x; i++){
+                                        reg.write( mem.read(reg.read_i() + i));
+                                    }
+
+                                default:
+                                    break;
+                                
+                                pc += 2;
+                                break;
+                            }
+
+
+                        default: //Ignore unrecognized instructions
+                            break;
 
                     }
 
