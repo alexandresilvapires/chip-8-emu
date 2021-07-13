@@ -12,7 +12,7 @@ class Screen {
         SDL_Renderer *_renderer;    // The renderer that will render the game
         SDL_Texture *_texture;      // A texture map that has the internal console resolution
 
-        uint32_t display[WINDOW_INTERNAL_WIDTH * WINDOW_INTERNAL_HEIGHT]  //contains the value of every pixel in chip-8
+        uint32_t display[WINDOW_INTERNAL_WIDTH * WINDOW_INTERNAL_HEIGHT];  //contains the value of every pixel in chip-8
 
 
     public:
@@ -48,7 +48,7 @@ class Screen {
 
             // Initializes Texture
 
-            _texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, 
+            _texture = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, 
                                                     WINDOW_INTERNAL_WIDTH, WINDOW_INTERNAL_HEIGHT);
 
             if (_texture == nullptr) {
@@ -80,10 +80,10 @@ class Screen {
         }
 
         void draw(){
-            SDL_UpdateTexture(texture, NULL, display, WINDOW_INTERNAL_WIDTH * sizeof(uint32_t));
-            SDL_RenderClear(renderer);
-            SDL_RenderCopy(renderer, texture, NULL, NULL);
-            SDL_RenderPresent(renderer);
+            SDL_UpdateTexture(_texture, NULL, display, WINDOW_INTERNAL_WIDTH * sizeof(uint32_t));
+            SDL_RenderClear(_renderer);
+            SDL_RenderCopy(_renderer, _texture, NULL, NULL);
+            SDL_RenderPresent(_renderer);
         }
 };
 

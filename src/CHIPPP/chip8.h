@@ -33,13 +33,21 @@ class Chip8 {
     public:
         Chip8(){}
 
+        Chip8(std::fstream& rom){
+            mem.loadRom(rom);
+        }
+
+        void run(){
+            while( decode( fetch() ));
+        }
+
         // Fetches the instruction from memory
         int fetch(){
             return mem.read(pc);
         }
 
-        // Given an instruction, decodes it and executes it
-        void decode(int instr) {
+        // Given an instruction, decodes it and executes it- Returns true when screen is closed.
+        bool decode(int instr) {
 
             switch(instr) {
                 case 0x00E0:    // Clear screen instruction
@@ -164,7 +172,7 @@ class Chip8 {
                                     reg.write(x, res);
                                     break;
 
-                                case E: // SHL x, 1 in VF if most significant bit in x is 1
+                                case 14: // SHL x, 1 in VF if most significant bit in x is 1
                                     unsigned char vx = reg.read(x);
 
                                     reg.write(15, vx << 7);
@@ -293,8 +301,9 @@ class Chip8 {
                                 
                                 case 10: // Wait for a key press and store pressed key in Vx, format FX0A
                                     
-                                    // TODO keyboard
-                                    unsigned char key = 0;
+                                    unsigned char key = keyboard.registerKeyboard();
+
+                                    if(key == -1) return false;
 
                                     reg.write(x, key);
 
@@ -340,16 +349,14 @@ class Chip8 {
 
                                 case 85: // Stores registers 0 to Vx into I to I+X. Format FX55
 
-                                    // TODO verify this
                                     for(int i = 0; i <= x; i++){
-                                        reg.write_i( (int) reg.read(i));
+                                        mem.write(reg.read_i() + i, (int) reg.read(i));
                                     }
 
                                 case 101: // Write into registers 0 to Vx from addresses I to I+X. Format FX65
 
-                                    // TODO verify this
                                     for(int i = 0; i <= x; i++){
-                                        reg.write( mem.read(reg.read_i() + i));
+                                        reg.write(i ,mem.read(reg.read_i() + i));
                                     }
 
                                 default:
@@ -362,7 +369,7 @@ class Chip8 {
 
                         default: //Ignore unrecognized instructions
                             break;
-
+                        return true;
                     }
 
 
@@ -373,7 +380,7 @@ class Chip8 {
         // Then shifts based on the byte interval in shiftLow/High to cut unnecessary bits
         // Eg: ABCD & 0FF0 -> 0BC0, shift interval (4,12) -> BC
         int getNibble(int instr, int mask = 0xFFFF, int shiftLow = 0, int shiftHigh = 16){
-            return ((instr && mask) % pow(2,shiftHigh) >> shiftLow);
+            return ((instr && mask) % (int) pow(2,shiftHigh) >> shiftLow);
         }
 
 };

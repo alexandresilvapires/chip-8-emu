@@ -27,12 +27,10 @@ int main(int argc, char *argv[]){
 	}
     
 
-    Chip8 chip = new Chip8();
-
-    chip.mem.loadRom(rom);
+    Chip8 chip = Chip8(rom);
 	
     //while true, emulate cycle (fetch, decode, execute), draw graphics and set pressed keys
-    //TODO
+    chip.run();
 
     // Close the rom
     rom.close();
