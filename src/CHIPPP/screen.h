@@ -60,7 +60,7 @@ class Screen {
 
         bool flipPixel(int x, int y){
 
-            int i = x % WINDOW_INTERNAL_WIDTH + y % WINDOW_INTERNAL_HEIGHT;
+            int i = x * WINDOW_INTERNAL_WIDTH + y * WINDOW_INTERNAL_HEIGHT;
 
             // flips given pixel's color
             if(display[i] == 0xFF000000){

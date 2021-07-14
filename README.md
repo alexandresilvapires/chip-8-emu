@@ -1,5 +1,5 @@
 # CHIPPP-8, a CHIP-8 Emulator
-A simple Chip-8 emulator written in C++, using the SDL library.
+A simple Chip-8 emulator written in C++, using the SDL2 library.
 
 ### Current progress:
 
@@ -32,7 +32,7 @@ A simple Chip-8 emulator written in C++, using the SDL library.
 | SKP Vx        | X     |
 | SKNP Vx       | X     |
 | LD Vx, DT     | X     |
-| LD Vx, K      |       |
+| LD Vx, K      | X     |
 | LD DT, Vx     | X     |
 | LD ST, Vx     | X     |
 | ADD I, Vx     | X     |
@@ -42,10 +42,13 @@ A simple Chip-8 emulator written in C++, using the SDL library.
 | ADD Vx, [I]   | X     |
 
 
+All instructions are implemented, missing only corrections to the screen
+
 *1 - originally used for old computers, not necessary for the interpreter
 
 ### Instructions to build and run:
-TODO
+Enter 'make' in the console, and run with ./chip romPath
+Eg: ./chip roms/TANK 
 
 ### Notes:
 Includes some public domain roms to test.

@@ -9,7 +9,7 @@ int main(int argc, char *argv[]){
     
     // Verify input
     
-    if (argc != 1){
+    if (argc != 2){
         std::cerr << "Invalid arguments given: ./chip romPath" << std::endl;
         return -1;
     }

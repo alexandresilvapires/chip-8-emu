@@ -3,8 +3,8 @@
 
 
 // Window specs
-#define WINDOW_WIDTH            64
-#define WINDOW_HEIGHT           32
+#define WINDOW_WIDTH            640
+#define WINDOW_HEIGHT           320
 
 // Internal console resolution
 #define WINDOW_INTERNAL_WIDTH   64

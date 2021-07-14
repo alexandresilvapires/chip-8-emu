@@ -66,7 +66,9 @@ class Memory {
             std::string content;
             rom >> std::hex >> content;
 
-            for(int i = 0x200; i < content.length(); i++){
+            int lenght = (int) content.length();
+
+            for(int i = 0x200; i < lenght; i++){
                 write(i, content[i]);
             }
         }

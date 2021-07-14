@@ -97,11 +97,12 @@ class Keyboard {
                             return -1;
                             
                         // check for keypresses
-                        case SDL_KEYDOWN:
+                        case SDL_KEYDOWN: {
                             //Only registers keys that go down
                             int key = registerKeyboardAux(event.key.keysym.sym, false);
                             if(key != -1) return key;
                             break;
+                        }
                         case SDL_KEYUP:
                             //but keys up also need to be registered
                             registerKeyboardAux(event.key.keysym.sym, true);
@@ -111,6 +112,7 @@ class Keyboard {
                     }
                 } // end of message processing
             }
+            return -1;
         }
 };
 
