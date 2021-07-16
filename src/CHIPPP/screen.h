@@ -75,6 +75,10 @@ class Screen {
             }
         }
 
+        void close(){
+            SDL_Quit();
+        }
+
         void clearDisplay(){
             memset(display, 0, sizeof(display));
         }

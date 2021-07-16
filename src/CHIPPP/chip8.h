@@ -33,23 +33,24 @@ class Chip8 {
     public:
         Chip8(){}
 
-        Chip8(std::fstream& rom){
-            mem.loadRom(rom);
+        Chip8(char* rom, int size){
+            mem.loadRom(rom, size);
         }
 
         void run(){
             screen.clearDisplay();
             while( decode( fetch() ));
+            screen.close();
         }
 
         // Fetches the instruction from memory
         int fetch(){
-            return mem.read(pc);
+            return mem.read(pc) << 8 | mem.read(pc+1);
         }
 
         // Given an instruction, decodes it and executes it- Returns true when screen is closed.
         bool decode(int instr) {
-
+            std::cout << "Instruction: " << std::hex <<instr << std::endl;
             switch(instr) {
                 case 0x00E0:    // Clear screen instruction
                     screen.clearDisplay();
@@ -369,6 +370,7 @@ class Chip8 {
                         }
 
                         default: //Ignore unrecognized instructions
+                            pc += 2;
                             break;
                     }
             }

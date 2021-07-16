@@ -18,22 +18,26 @@ int main(int argc, char *argv[]){
 
     char* romPath = argv[0]; //Path to the rom that shall be played
 
-	std::fstream rom;
-	rom.open(romPath, std::ios::in);
+	std::ifstream file(romPath, std::ios::binary | std::ios::ate);
 
-	if (!rom) {
+
+	if (!file.is_open()) {
 		std::cerr << "Could not open rom!" << std::endl;
         return -1;
 	}
-    
+    std::streampos size = file.tellg();
+    char* rom = new char[size];
+	file.seekg(0, std::ios::beg);
+	file.read(rom, size);
+	file.close();
 
-    Chip8 chip = Chip8(rom);
+
+    Chip8 chip = Chip8(rom, size);
+
+    delete[] rom;
 	
     //while true, emulate cycle (fetch, decode, execute), draw graphics and set pressed keys
     chip.run();
-
-    // Close the rom
-    rom.close();
 }
 
 

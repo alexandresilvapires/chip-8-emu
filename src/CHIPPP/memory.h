@@ -4,6 +4,7 @@
 #include "system.h"
 #include <vector>
 #include <fstream>
+#include <iostream>
 #include <string>
 
 class Memory {
@@ -59,17 +60,13 @@ class Memory {
             return _memory[i % _memory.size()]*0x0100 + _memory[(i+1) % _memory.size()];
         }
 
-        void loadRom(std::fstream& rom){
+        void loadRom(char* rom, int size){
             // Loads the rom byte by byte to the memory, in big endian fashion
             //TODO VERIFY ALL THIS
 
-            std::string content;
-            rom >> std::hex >> content;
-
-            int lenght = (int) content.length();
-
-            for(int i = 0x200; i < lenght; i++){
-                write(i, content[i]);
+            for(int i = 0x200; i < size; i++){
+                //std::cout << rom[i] << std::endl;
+                write(i, rom[i]);
             }
         }
 
