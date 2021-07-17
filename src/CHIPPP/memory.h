@@ -60,14 +60,14 @@ class Memory {
             return _memory[i % _memory.size()]*0x0100 + _memory[(i+1) % _memory.size()];
         }
 
-        void loadRom(char* rom, int size){
+        void loadRom(unsigned char* rom, int size){
             // Loads the rom byte by byte to the memory, in big endian fashion
-            //TODO VERIFY ALL THIS
-
-            for(int i = 0x200; i < size; i++){
-                //std::cout << rom[i] << std::endl;
-                write(i, rom[i]);
+            std::cout << "File size: " << size << std::endl;
+            for(int i = 0; i < size; i++){
+                //std::cout << std::hex << (unsigned int) rom[i] << " ";
+                write(i + 0x200, rom[i]);
             }
+            std::cout << "\n";
         }
 
         void loadFont(){

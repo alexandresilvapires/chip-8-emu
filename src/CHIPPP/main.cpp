@@ -16,7 +16,7 @@ int main(int argc, char *argv[]){
 
     // Open the rom and loads it into memory
 
-    char* romPath = argv[0]; //Path to the rom that shall be played
+    char* romPath = argv[1]; //Path to the rom that shall be played
 
 	std::ifstream file(romPath, std::ios::binary | std::ios::ate);
 
@@ -26,11 +26,10 @@ int main(int argc, char *argv[]){
         return -1;
 	}
     std::streampos size = file.tellg();
-    char* rom = new char[size];
+    unsigned char* rom = new unsigned char[size];
 	file.seekg(0, std::ios::beg);
-	file.read(rom, size);
+	file.read( (char*) rom, size);
 	file.close();
-
 
     Chip8 chip = Chip8(rom, size);
 

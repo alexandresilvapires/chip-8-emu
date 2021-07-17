@@ -33,7 +33,7 @@ class Chip8 {
     public:
         Chip8(){}
 
-        Chip8(char* rom, int size){
+        Chip8(unsigned char* rom, int size){
             mem.loadRom(rom, size);
         }
 
@@ -50,7 +50,7 @@ class Chip8 {
 
         // Given an instruction, decodes it and executes it- Returns true when screen is closed.
         bool decode(int instr) {
-            std::cout << "Instruction: " << std::hex <<instr << std::endl;
+            std::cout << std::hex << instr << " ";
             switch(instr) {
                 case 0x00E0:    // Clear screen instruction
                     screen.clearDisplay();
@@ -59,6 +59,7 @@ class Chip8 {
 
                 case 0x00EE:    // Return from subroutine
                     pc = stack.pop();
+                    pc += 2;
                     break;
 
                 default:
@@ -290,7 +291,6 @@ class Chip8 {
                             }
                         }
                         case 0xF: { // Used for load and add instructions over registers and items, usual format FX**
-                            
                             int n = getNibble(instr, 0x00FF, 0, 8);
                             int x = getNibble(instr, 0x0F00, 8, 12);
 
@@ -364,13 +364,13 @@ class Chip8 {
                                 default:
                                     break;
                                 
-                                pc += 2;
-                                break;
                             }
+                            pc += 2;
+                            break;
                         }
 
                         default: //Ignore unrecognized instructions
-                            pc += 2;
+                            std::cout << "Ignored instruction " << instr << std::endl;
                             break;
                     }
             }
@@ -382,7 +382,7 @@ class Chip8 {
         // Then shifts based on the byte interval in shiftLow/High to cut unnecessary bits
         // Eg: ABCD & 0FF0 -> 0BC0, shift interval (4,12) -> BC
         int getNibble(int instr, int mask = 0xFFFF, int shiftLow = 0, int shiftHigh = 16){
-            return ((instr && mask) % (int) pow(2,shiftHigh) >> shiftLow);
+            return ( (instr & mask) % (int) pow(2,shiftHigh) >> shiftLow);
         }
 
 };
