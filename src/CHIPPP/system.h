@@ -19,6 +19,9 @@
 // Timer specs
 #define TIMER_FREQUENCY         60
 
+// Clock Speed
+#define CLOCK_SPEED             500
+
 
 
 #endif 

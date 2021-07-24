@@ -13,6 +13,8 @@
 #include <vector>
 #include <iostream>
 #include <cstdlib>
+#include <chrono>
+#include <thread>
 
 class Chip8 {
 
@@ -38,8 +40,42 @@ class Chip8 {
         }
 
         void run(){
+            bool isRunning = true;        //When true, emulation ends
+
             screen.clearDisplay();
-            while( decode( fetch() ));
+
+            //Get how many milliseconds we must wait for Timer and Clock
+            int milliWaitTimer = (int) round(1000 / TIMER_FREQUENCY);
+            int milliWaitClock = (int) round(1000 / CLOCK_SPEED);
+
+            //get greatest common factor between clock time and timer time
+            int waitTime = 1;
+            for (int i = 1; i <= milliWaitTimer && i <= milliWaitClock; i++){
+                {
+                    if (milliWaitTimer % i == 0 && milliWaitClock % i == 0)
+                        waitTime = i;
+                }
+            };
+            long currentClock = 0;
+
+            //Run until exit is pressed
+            while(isRunning){
+
+                // Decrement timer if time has come
+                if(currentClock % milliWaitTimer == 0){
+                    timer.decrementTimer();
+                    sound.decrementTimer();
+                }
+
+                // Fetch, Decode and Execute instruction if time has come
+                if(currentClock % milliWaitClock == 0){
+                    isRunning = decode(fetch());
+                }
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(waitTime));
+                currentClock += waitTime;
+            };
+            
             screen.close();
         }
 
@@ -384,7 +420,6 @@ class Chip8 {
         int getNibble(int instr, int mask = 0xFFFF, int shiftLow = 0, int shiftHigh = 16){
             return ( (instr & mask) % (int) pow(2,shiftHigh) >> shiftLow);
         }
-
 };
 
 #endif 
