@@ -16,12 +16,15 @@ class Stack {
 
         void push(int content){
             // The CHIP-8 stack could only do 16 nested subroutines, so we cant push anything beyond that
+            _stack.push(content);
+            /*             
             if(_stack.size() < 16){
                 _stack.push(content);
+                std::cout << "Stack size: " << _stack.size() << std::endl;
             }
             else{
                 std::cout << "FATAL: Stack pushed beyond size 16." << std::endl;
-            }
+            } */
         }
 
         int pop(){

@@ -2,6 +2,8 @@
 #define __KEYBOARD_H__
 
 #include <SDL2/SDL.h>
+#include <iostream>
+
 
 class Keyboard {
 
@@ -94,7 +96,7 @@ class Keyboard {
                     switch (event.type) {
                         // exit if the window is closed
                         case SDL_QUIT:
-                            return -1;
+                            return 99;
                             
                         // check for keypresses
                         case SDL_KEYDOWN: {
@@ -113,6 +115,35 @@ class Keyboard {
                 } // end of message processing
             }
             return -1;
+        }
+
+        bool updateKeyboard(){
+            SDL_Event event;
+
+
+            while (SDL_PollEvent(&event)) {
+                // check for messages
+                switch (event.type) {
+                    // exit if the window is closed
+                    case SDL_QUIT:
+                        SDL_Quit();
+                        return true;
+                        
+                    // check for keypresses
+                    case SDL_KEYDOWN: {
+                        //Only registers keys that go down
+                        registerKeyboardAux(event.key.keysym.sym, false);
+                        break;
+                    }
+                    case SDL_KEYUP:
+                        //but keys up also need to be registered
+                        registerKeyboardAux(event.key.keysym.sym, true);
+                        break;
+                    default:
+                        break;
+                }
+            } // end of message processing
+            return false;
         }
 };
 

@@ -66,8 +66,13 @@ class Chip8 {
                     sound.decrementTimer();
                 }
 
-                // Fetch, Decode and Execute instruction if time has come
+                // Get keyboard status, Fetch, Decode and Execute instruction if time has come
                 if(currentClock % milliWaitClock == 0){
+                    if(keyboard.updateKeyboard()){
+                        isRunning = false;
+                        std::cout << "Quitting!" << std::endl;
+                        break;
+                    }
                     isRunning = decode(fetch());
                 }
 
@@ -85,7 +90,7 @@ class Chip8 {
 
         // Given an instruction, decodes it and executes it- Returns true when screen is closed.
         bool decode(int instr) {
-            std::cout << std::hex << instr << " ";
+            //std::cout << std::hex << instr << " ";
             switch(instr) {
                 case 0x00E0:    // Clear screen instruction
                     screen.clearDisplay();
@@ -153,7 +158,7 @@ class Chip8 {
                         case 0x7: { //add val NN to reg VX, format 7XNN
                             int x = getNibble(instr, 0x0F00, 8, 12);
                             unsigned char nn = (unsigned char) getNibble(instr, 0x00FF, 0, 8);
-                            
+
                             reg.write(x, reg.read(x) + nn);
                             pc += 2;
                             break;
@@ -343,8 +348,7 @@ class Chip8 {
                                 case 0xA: { // Wait for a key press and store pressed key in Vx, format FX0A
                                     
                                     unsigned char key = keyboard.registerKeyboard();
-
-                                    if(key == -1) return false;
+                                    if(key == 99) return false;
 
                                     reg.write(x, key);
 

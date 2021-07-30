@@ -37,6 +37,8 @@ int main(int argc, char *argv[]){
 	
     //while true, emulate cycle (fetch, decode, execute), draw graphics and set pressed keys
     chip.run();
+
+    return 0;
 }
 
 
