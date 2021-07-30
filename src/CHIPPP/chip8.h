@@ -21,8 +21,6 @@ class Chip8 {
     private:
         // System modules and variables
         int pc = 0x200;       // Program counter: Memory from 0x0 to 0x1FF are reserved, so we start at 0x200
-        unsigned char sp = 0; // Stack pointer. TODO: current stack implementation doesnt care about sp!
-
 
         Memory mem = Memory();
         Register reg = Register();
@@ -38,6 +36,7 @@ class Chip8 {
         Chip8(unsigned char* rom, int size){
             mem.loadRom(rom, size);
         }
+
 
         void run(){
             bool isRunning = true;        //When true, emulation ends
@@ -124,7 +123,7 @@ class Chip8 {
                             pc += 2;
                             break;
                         }
-                        case 0x4: { //Skip next instruction if Vx != kk, format 3xkk
+                        case 0x4: { //Skip next instruction if Vx != kk, format 4xkk
                             unsigned char x = (unsigned char) getNibble(instr, 0x0F00,8,12);
                             int kk = getNibble(instr, 0x00FF,0,8);
                             
@@ -134,7 +133,7 @@ class Chip8 {
                             pc += 2;
                             break;
                         }
-                        case 0x5:  { //Skip next instruction if Vx == Vy, format 3xy0
+                        case 0x5:  { //Skip next instruction if Vx == Vy, format 5xy0
                             unsigned char x = (unsigned char) getNibble(instr, 0x0F00,8,12);
                             unsigned char y = (unsigned char) getNibble(instr, 0x00F0,4,8);
                             
@@ -145,23 +144,24 @@ class Chip8 {
                             break;
                         }
                         case 0x6: { //set reg VX to val NN, format 6XNN
-                            int x = getNibble(instr, 0x0F00, 0, 12);
+                            int x = getNibble(instr, 0x0F00, 8, 12);
                             unsigned char nn = (unsigned char) getNibble(instr, 0x00FF, 0, 8);
                             reg.write(x, nn);
                             pc += 2;
                             break;
                         }
                         case 0x7: { //add val NN to reg VX, format 7XNN
-                            int x = getNibble(instr, 0x0F00, 0, 12);
+                            int x = getNibble(instr, 0x0F00, 8, 12);
                             unsigned char nn = (unsigned char) getNibble(instr, 0x00FF, 0, 8);
+                            
                             reg.write(x, reg.read(x) + nn);
                             pc += 2;
                             break;
                         }
                         case 0x8: { //Used for operations between two registers, format 8xyN
                             unsigned char x = (unsigned char) getNibble(instr, 0x0F00, 8, 12);
-                            unsigned char y = (unsigned char) getNibble(instr, 0x0F00, 4, 8);
-                            int n = getNibble(instr, 0x0F00, 0, 4);
+                            unsigned char y = (unsigned char) getNibble(instr, 0x00F0, 4, 8);
+                            int n = getNibble(instr, 0x000F, 0, 4);
 
                             switch(n){
                                 case 0x0: { // Set Vx to Vy
@@ -260,7 +260,7 @@ class Chip8 {
                                  // Format Dxyn
 
                             unsigned char n = (unsigned char) getNibble(instr, 0x000F,0,4);
-                            unsigned char vx = reg.read( getNibble(instr, 0x0F00,8,12));
+                            unsigned char vxOG = reg.read( getNibble(instr, 0x0F00,8,12));
                             unsigned char vy = reg.read( getNibble(instr, 0x00F0,4,8));
                             int i = reg.read_i();
 
@@ -269,28 +269,31 @@ class Chip8 {
                             bool collision = false;
 
                             for(int k = 0; k < n; k++){
+                                unsigned char vx = vxOG;
 
                                 //Stores a row of pixels to draw 
                                 unsigned char bitmap = mem.read(i);
+                                //std::cout << "\nat k=" << k << " reading bitmap " << std::hex << (int) bitmap;
 
                                 //Cycle every bit of the bitmap
                                 for(int l = 7; l >= 0; l--){
                                     unsigned char newbit = getNibble(bitmap, pow(2, l), l, 8);
-
+                                    //std::cout << "\nat pos: " << l << " for vx:" <<std::hex << (int) vx << ", vy:" <<std::hex << (int) vy <<  " current bit = " <<std::hex << (int) newbit;
+    
                                     if(newbit == 1){
-                                        collision = collision | screen.flipPixel(vx, vy);
+                                        collision = collision | screen.flipPixel(vy, vx);
                                     }
 
                                     vx++;
 
                                     //If we reach the right end of the screen, we break
-                                    if(vx % WINDOW_INTERNAL_WIDTH == 0) break;
+                                    if(vx >= WINDOW_INTERNAL_WIDTH) break;
                                 }
 
                                 vy++;
                                     
                                  //If we reach the bottom end of the screen, we break
-                                if(vy % WINDOW_INTERNAL_HEIGHT == 0) break;
+                                if(vy >= WINDOW_INTERNAL_HEIGHT) break;
                                 i++;
 
                             }
@@ -375,15 +378,14 @@ class Chip8 {
                                 case 0x33: { // Store BCD representation of Vx in I, I+1 and I+2 (100s, 10s, 1s respectively).
                                         // Format FX33
 
-                                    // TODO verify this
-
                                     unsigned char vx = reg.read(x);
                                     unsigned char units = vx % 10;
-                                    unsigned char tens = vx % 100 - units;
+                                    unsigned char tens = (vx % 100) / 10;
+                                    unsigned char hundreds = vx / 100;
 
-                                    mem.write(reg.read_i() + 2, units);
+                                    mem.write(reg.read_i(), hundreds);
                                     mem.write(reg.read_i() + 1, tens);
-                                    mem.write(reg.read_i(), vx - tens);
+                                    mem.write(reg.read_i() + 2, units);
                                 }
                                 case 0x55: // Stores registers 0 to Vx into I to I+X. Format FX55
 

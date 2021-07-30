@@ -4,6 +4,9 @@
 #include <SDL2/SDL.h>
 #include "system.h"
 
+#define ONCOLOR     0xFFFFFFFF
+#define OFFCOLOR    0xFF000000
+
 class Screen {
 
     private:
@@ -60,15 +63,15 @@ class Screen {
 
         bool flipPixel(int x, int y){
 
-            int i = x * WINDOW_INTERNAL_WIDTH + y * WINDOW_INTERNAL_HEIGHT;
+            int i = x * WINDOW_INTERNAL_WIDTH + y;
 
             // flips given pixel's color
-            if(display[i] == 0xFF000000){
-                display[i] = 0xFFFFFFFF;
+            if(display[i] == ONCOLOR){
+                display[i] = OFFCOLOR;
                 return false;
             }
             else{
-                display[i] = 0xFF000000;
+                display[i] = ONCOLOR;
 
                 //Returns true in case of a 'collision'
                 return true;

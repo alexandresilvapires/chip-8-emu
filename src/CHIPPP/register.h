@@ -35,7 +35,7 @@ class Register {
                 int i = std::stoul(&reg[1], nullptr, 16);
 
                 // We assure that the memory being accessed isn't out of bounds
-                _registers[i % _registers.size()] = content;
+                write(i, content);
             }
             else{
                 std::cout << "FATAL: Invalid register memory write requested." << std::endl;
@@ -54,7 +54,7 @@ class Register {
                 int i = std::stoul(&reg[1], nullptr, 16);
 
                 // We assure that the memory being accessed isn't out of bounds
-                return _registers[i % _registers.size()];
+                return read(i);
             }
             else{
                 std::cout << "FATAL: Invalid register memory write requested." << std::endl;
