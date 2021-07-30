@@ -41,14 +41,18 @@ A simple Chip-8 emulator written in C++, using the SDL2 library.
 | LD [I], Vx    | X     |
 | ADD Vx, [I]   | X     |
 
+All instructions are implemented, yet some bugs still remain.
 
-All instructions are implemented, missing only corrections to the screen
-
-*1 - originally used for old computers, not necessary for the interpreter
+*1 - originally used for old computers, not necessary for a modern interpreter
 
 ### Instructions to build and run:
-Enter 'make' in the console, and run with ./chip romPath
-Eg: ./chip roms/TANK 
+
+In order to build the emulator, the SDL2 library needs to be installed.
+Instructions to do so can be found here: https://www.libsdl.org/download-2.0.php
+
+Clone the repo, extract it, and in the terminal, cd to it. (Eg:'cd chip-8-emu')
+Enter 'make' in the console, and run with './chip romPath'
+Eg: ./chip roms/TICTAC
 
 ### Notes:
 Includes some public domain roms to test.

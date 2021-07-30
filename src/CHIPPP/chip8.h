@@ -390,18 +390,20 @@ class Chip8 {
                                     mem.write(reg.read_i(), hundreds);
                                     mem.write(reg.read_i() + 1, tens);
                                     mem.write(reg.read_i() + 2, units);
+                                    break;
                                 }
                                 case 0x55: // Stores registers 0 to Vx into I to I+X. Format FX55
 
                                     for(int i = 0; i <= x; i++){
                                         mem.write(reg.read_i() + i, (int) reg.read(i));
                                     }
+                                    break;
 
                                 case 0x65: // Write into registers 0 to Vx from addresses I to I+X. Format FX65
-
                                     for(int i = 0; i <= x; i++){
                                         reg.write(i ,mem.read(reg.read_i() + i));
                                     }
+                                    break;
 
                                 default:
                                     break;
